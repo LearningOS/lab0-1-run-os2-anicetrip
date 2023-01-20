@@ -17,7 +17,7 @@ mod trap;
 
 core::arch::global_asm!(include_str!("entry.asm"));
 core::arch::global_asm!(include_str!("link_app.S"));
-
+//复位静态未分配变量（ebss）和小数据静态未分配变量（sbss）
 fn clear_bss() {
     extern "C" {
         fn sbss();
@@ -32,7 +32,7 @@ fn clear_bss() {
 #[no_mangle]
 pub fn rust_main() -> ! {
     clear_bss();
-    logging::init();
+    logging::init();//启动日志
     println!("[kernel] Hello, world!");
     trap::init();
     batch::init();
