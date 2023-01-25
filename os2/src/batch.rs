@@ -95,12 +95,12 @@ lazy_static! {
             extern "C" {
                 fn _num_app();
             }
-            let num_app_ptr = _num_app as usize as *const usize;
-            let num_app = num_app_ptr.read_volatile();
-            let mut app_start: [usize; MAX_APP_NUM + 1] = [0; MAX_APP_NUM + 1];
+            let num_app_ptr = _num_app as usize as *const usize; //强转为64位指针，设定长度位usize，由于在link_app.S中，用.quad强转为64位所以获取了第一个常量的值。
+            let num_app = num_app_ptr.read_volatile();//读取该指针指向的值。
+            let mut app_start: [usize; MAX_APP_NUM + 1] = [0; MAX_APP_NUM + 1]; //初始化app_start
             let app_start_raw: &[usize] =
-                core::slice::from_raw_parts(num_app_ptr.add(1), num_app + 1);
-            app_start[..=num_app].copy_from_slice(app_start_raw);
+                core::slice::from_raw_parts(num_app_ptr.add(1), num_app + 1);//from_raw_parts(初始地址，长度)获取全部的并强制转换为数组。
+            app_start[..=num_app].copy_from_slice(app_start_raw);//一一对应赋值。
             AppManager {
                 num_app,
                 current_app: 0,
